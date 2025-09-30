@@ -245,3 +245,117 @@ const myTimer = {
 };
 
 myTimer.startCountdown();
+
+// Primitives in stack
+let age = 30;
+let oldAge = age; // Independent copy
+age = 31;
+console.log('age:', age);
+console.log('oldAge:', oldAge);
+
+// Objects in heap
+const me = { name: 'Jonas', age: 30 };
+const friend = me; // Shared reference
+friend.age = 27;
+console.log('me:', me);
+console.log('friend:', friend);
+
+// Reference behavior
+function changeAge(person, newAge) {
+  person.age = newAge;
+  return person;
+}
+
+const originalPerson = { name: 'Sarah', age: 25 };
+const updatedPerson = changeAge(originalPerson, 30);
+console.log('original:', originalPerson);
+console.log('updated:', updatedPerson);
+console.log('same object?:', originalPerson === updatedPerson);
+
+// Shallow copying
+const original = {
+  name: 'Alice',
+  age: 28,
+  hobbies: ['reading', 'coding'],
+};
+
+const shallowCopy = { ...original };
+shallowCopy.name = 'Bob';
+console.log('original name:', original.name);
+console.log('copy name:', shallowCopy.name);
+
+// Nested objects still shared
+shallowCopy.hobbies.push('gaming');
+console.log('original hobbies:', original.hobbies);
+console.log('copy hobbies:', shallowCopy.hobbies);
+
+const anotherCopy = Object.assign({}, original);
+console.log('Object.assign copy:', anotherCopy);
+
+// Deep copying
+const deepOriginal = {
+  name: 'Charlie',
+  age: 32,
+  address: { city: 'Paris', country: 'France' },
+  hobbies: ['travel', 'photography'],
+};
+
+const deepCopy = structuredClone(deepOriginal);
+deepCopy.address.city = 'London';
+deepCopy.hobbies.push('cooking');
+console.log('original address:', deepOriginal.address);
+console.log('copy address:', deepCopy.address);
+console.log('original hobbies:', deepOriginal.hobbies);
+console.log('copy hobbies:', deepCopy.hobbies);
+
+// JSON method limitation
+const problemObject = {
+  name: 'Test',
+  date: new Date(),
+  method: function () {
+    return 'hello';
+  },
+  undefinedValue: undefined,
+};
+
+const brokenCopy = JSON.parse(JSON.stringify(problemObject));
+console.log('Broken copy:', brokenCopy);
+
+const workingCopy = structuredClone(problemObject);
+console.log('Working copy:', workingCopy);
+
+// User manager system
+const userManager = {
+  users: [],
+
+  addUser: function (userData) {
+    const userCopy = structuredClone(userData);
+    this.users.push(userCopy);
+    return this;
+  },
+
+  getUsers: function () {
+    return [...this.users];
+  },
+};
+
+const originalUser = { name: 'John', preferences: { theme: 'dark' } };
+userManager.addUser(originalUser);
+
+originalUser.name = 'Modified';
+console.log('Original changed:', originalUser);
+console.log('Stored user:', userManager.getUsers()[0]);
+
+// Strict mode examples
+function demonstrateThis() {
+  console.log('this in strict mode:', this);
+}
+demonstrateThis();
+
+const readOnlyObj = Object.freeze({ name: 'Frozen' });
+try {
+  readOnlyObj.name = 'Changed';
+  console.log('Mutation succeeded');
+} catch (error) {
+  console.log('Strict mode caught error:', error.message);
+}
