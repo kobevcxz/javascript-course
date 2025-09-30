@@ -40,3 +40,47 @@ btnCloseModalEl.addEventListener('click', closeModal);
 
 // Attach event listener to overlay
 overlayEl.addEventListener('click', closeModal);
+
+// Handling an "Esc" keypress event
+document.addEventListener('keydown', function (event) {
+  console.log('A key was pressed:', event.key);
+
+  if (event.key === 'Escape' && !modalEl.classList.contains('hidden')) {
+    closeModal();
+  }
+});
+
+// Add focus management variables
+let lastFocusedButton = null;
+
+// Enhance openModal function with focus management
+const openModalWithFocus = function () {
+  modalEl.classList.remove('hidden');
+  overlayEl.classList.remove('hidden');
+  // Move focus to the modal
+  modalEl.focus();
+  // Store which button opened the modal
+  lastFocusedButton = document.activeElement;
+};
+
+// Enhance closeModal function to restore focus
+const closeModalWithFocus = function () {
+  modalEl.classList.add('hidden');
+  overlayEl.classList.add('hidden');
+  // Restore focus to the button that opened the modal
+  if (lastFocusedButton) {
+    lastFocusedButton.focus();
+  }
+};
+
+// Replace old event listeners with the focus-aware ones
+btnsOpenModalEl.forEach(btn =>
+  btn.addEventListener('click', openModalWithFocus)
+);
+btnCloseModalEl.addEventListener('click', closeModalWithFocus);
+overlayEl.addEventListener('click', closeModalWithFocus);
+
+// Add ARIA attributes for screen reader accessibility
+modalEl.setAttribute('role', 'dialog');
+modalEl.setAttribute('aria-modal', 'true');
+btnCloseModalEl.setAttribute('aria-label', 'Close modal');
