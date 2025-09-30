@@ -2,7 +2,6 @@
 
 console.log('Starting program');
 
-// ===== Execution Context & Call Stack =====
 function alpha() {
   console.log('alpha:start');
   beta();
@@ -23,12 +22,11 @@ function outerFunction() {
 
 function innerFunction() {
   console.log('Inner function');
-  console.trace(); // shows call stack
+  console.trace();
 }
 
 outerFunction();
 
-// ===== Scoping & Scope Chain =====
 const outer = 'global';
 
 function demoScope() {
@@ -38,7 +36,8 @@ function demoScope() {
     var functionVar = 'var-function-scoped';
     console.log(outer, inner, blockConst, functionVar);
   }
-  console.log(outer, inner, /* blockConst not here */, functionVar);
+  // blockConst not here
+  console.log(outer, inner, functionVar);
 }
 
 demoScope();
@@ -48,32 +47,28 @@ const name = 'GlobalName';
 function a() {
   const name = 'FunctionName';
   function b() {
-    console.log(name); // scope chain lookup
+    console.log(name);
   }
   b();
 }
 
 a();
 
-// ===== Hoisting & TDZ =====
-
-// Variable hoisting
-console.log(varX); // undefined
-// console.log(letX); // TDZ: ReferenceError
-// console.log(constX); // TDZ: ReferenceError
+console.log(varX);
+// console.log(letX);
+// console.log(constX);
 
 var varX = 1;
 let letX = 2;
 const constX = 3;
 
-console.log(varX); // 1
-console.log(letX); // 2
-console.log(constX); // 3
+console.log(varX);
+console.log(letX);
+console.log(constX);
 
-// Function hoisting
-console.log(addDecl(2, 3)); // works
-// console.log(addExpr(2, 3)); // TDZ ReferenceError
-// console.log(addArrow(2, 3)); // TDZ ReferenceError
+console.log(addDecl(2, 3));
+// console.log(addExpr(2, 3));
+// console.log(addArrow(2, 3));
 
 function addDecl(a, b) {
   return a + b;
@@ -85,30 +80,23 @@ const addExpr = function (a, b) {
 
 const addArrow = (a, b) => a + b;
 
-// Now all work
-console.log(addDecl(2, 3));  // 5
-console.log(addExpr(2, 3));  // 5
-console.log(addArrow(2, 3)); // 5
+console.log(addDecl(2, 3));
+console.log(addExpr(2, 3));
+console.log(addArrow(2, 3));
 
-// TDZ Fix Example
-// console.log(apiUrl); // TDZ ReferenceError
 const apiUrl = 'https://example.com';
 console.log(apiUrl);
 
-// ===== Combined Practice: Hoisting, Scope, Call Stack =====
+let title = 'Behind the Scenes';
 
-// let title already declared above, duplicate commented out
-// let title = 'Behind the Scenes';
-console.log('Behind the Scenes'); // simulate initial print
-
-function outer() {
+function outer2() {
   const label = 'outer';
-  function inner() {
-    console.log('scope:', label); // 'outer'
+  function inner2() {
+    console.log('scope:', label);
   }
-  inner();
+  inner2();
 }
-outer();
+outer2();
 
 function one() {
   two();
@@ -117,3 +105,143 @@ function two() {
   console.log('stack: two');
 }
 one();
+
+const person = {
+  name: 'Jonas',
+  greet: function () {
+    console.log(`Hello, I am ${this.name}`);
+  },
+};
+
+person.greet();
+
+const anotherPerson = { name: 'Sarah' };
+anotherPerson.greet = person.greet;
+anotherPerson.greet();
+
+// Detached function call (commented out to prevent error)
+// const greetFunction = person.greet;
+// greetFunction();
+
+const obj = {
+  name: 'Object',
+  regularMethod: function () {
+    console.log('Regular:', this.name);
+  },
+  arrowMethod: () => {
+    console.log('Arrow:', this.name);
+  },
+};
+
+obj.regularMethod();
+obj.arrowMethod();
+
+const quiz = {
+  name: 'Quiz Object',
+  regularMethod() {
+    console.log('Regular:', this.name);
+  },
+  arrowMethod: () => {
+    console.log('Arrow:', this.name);
+  },
+};
+
+quiz.regularMethod();
+quiz.arrowMethod();
+
+const timer = {
+  name: 'Timer',
+  start: function () {
+    console.log(`${this.name} starting...`);
+    const self = this;
+
+    setTimeout(function () {
+      console.log(`${self.name} finished`);
+    }, 1000);
+  },
+  startModern: function () {
+    console.log(`${this.name} starting modern...`);
+
+    setTimeout(() => {
+      console.log(`${this.name} finished modern`);
+    }, 1500);
+  },
+};
+
+timer.start();
+timer.startModern();
+
+const user = {
+  name: 'Alice',
+  hobbies: ['reading', 'coding', 'gaming'],
+
+  printHobbiesBad: () => {
+    this.hobbies.forEach(hobby => {
+      console.log(`${this.name} likes ${hobby}`);
+    });
+  },
+
+  printHobbiesGood() {
+    this.hobbies.forEach(hobby => {
+      console.log(`${this.name} likes ${hobby}`);
+    });
+  },
+};
+
+user.printHobbiesBad();
+user.printHobbiesGood();
+
+const functionTypes = {
+  regularFunction: function () {
+    console.log('Arguments length:', arguments.length);
+    console.log('First argument:', arguments[0]);
+  },
+
+  arrowFunction: () => {
+    console.log('Arrow function called');
+  },
+
+  modernFunction: (...args) => {
+    console.log('Args length:', args.length);
+    console.log('First arg:', args[0]);
+  },
+};
+
+functionTypes.regularFunction('hello', 'world');
+functionTypes.arrowFunction('test');
+functionTypes.modernFunction('modern', 'approach');
+
+const userCard = {
+  name: 'Sarah',
+
+  setupEvents() {
+    console.log('Event setup for:', this.name);
+  },
+};
+
+userCard.setupEvents();
+
+const calculator = {
+  numbers: [1, 2, 3, 4, 5],
+  multiplier: 2,
+
+  processNumbers() {
+    return this.numbers.map(num => num * this.multiplier);
+  },
+};
+
+console.log('Processed numbers:', calculator.processNumbers());
+
+const myTimer = {
+  name: 'My Timer',
+
+  startCountdown() {
+    console.log(`${this.name} starting countdown...`);
+
+    setTimeout(() => {
+      console.log(`${this.name} countdown finished!`);
+    }, 1000);
+  },
+};
+
+myTimer.startCountdown();
