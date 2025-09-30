@@ -21,30 +21,48 @@ score1El.textContent = 0;
 diceEl.classList.add('hidden');
 
 // variables
+let scores = [0, 0];
 let currentScore = 0;
 let activePlayer = 0;
 let playing = true;
 
+const switchPlayer = function () {
+  document.getElementById(`current--${activePlayer}`).textContent = 0;
+  currentScore = 0;
+  activePlayer = activePlayer === 0 ? 1 : 0;
+  player0El.classList.toggle('player--active');
+  player1El.classList.toggle('player--active');
+};
+
 // Roll dice functionality
 btnRoll.addEventListener('click', function () {
   if (playing) {
-    // 1. Generate a random dice roll
     const dice = Math.trunc(Math.random() * 6) + 1;
 
-    // 2. Display the dice
     diceEl.classList.remove('hidden');
     diceEl.src = `dice-${dice}.png`;
 
-    // 3. Check for rolled 1
     if (dice !== 1) {
-      // add dice to current score
       currentScore += dice;
       document.getElementById(`current--${activePlayer}`).textContent =
         currentScore;
     } else {
-      // if 1, reset current score
-      currentScore = 0;
-      document.getElementById(`current--${activePlayer}`).textContent = 0;
+      switchPlayer();
     }
   }
+});
+
+// Hold functionality
+btnHold.addEventListener('click', function () {
+  if (playing) {
+    scores[activePlayer] += currentScore;
+    document.getElementById(`score--${activePlayer}`).textContent =
+      scores[activePlayer];
+    switchPlayer();
+  }
+
+  // Test logs
+  console.log('Scores array:', scores);
+  console.log('Current score:', currentScore);
+  console.log('Active player:', activePlayer);
 });
