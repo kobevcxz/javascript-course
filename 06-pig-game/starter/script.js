@@ -1,6 +1,6 @@
 'use strict';
 
-console.log('=== PIG GAME DEVELOPMENT: FOUNDATION & DICE ROLLING ===');
+console.log('=== PIG GAME DEVELOPMENT: WIN CONDITIONS & GAME RESET ===');
 
 // Selecting elements
 const player0El = document.querySelector('.player--0');
@@ -18,14 +18,17 @@ const btnHold = document.querySelector('.btn--hold');
 // Starting conditions
 score0El.textContent = 0;
 score1El.textContent = 0;
+current0El.textContent = 0;
+current1El.textContent = 0;
 diceEl.classList.add('hidden');
 
-// variables
+// Variables
 let scores = [0, 0];
 let currentScore = 0;
 let activePlayer = 0;
 let playing = true;
 
+// Switch player function
 const switchPlayer = function () {
   document.getElementById(`current--${activePlayer}`).textContent = 0;
   currentScore = 0;
@@ -52,17 +55,73 @@ btnRoll.addEventListener('click', function () {
   }
 });
 
-// Hold functionality
+// Enhanced hold functionality with win condition and validation
 btnHold.addEventListener('click', function () {
-  if (playing) {
+  if (playing && currentScore > 0) {
+    // Add current score to active player's score
     scores[activePlayer] += currentScore;
     document.getElementById(`score--${activePlayer}`).textContent =
       scores[activePlayer];
-    switchPlayer();
+
+    // Check for win condition
+    if (scores[activePlayer] >= 100) {
+      // Player wins!
+      playing = false;
+      diceEl.classList.add('hidden');
+
+      // Add winner styling
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.add('player--winner');
+
+      // Remove active class from winner
+      document
+        .querySelector(`.player--${activePlayer}`)
+        .classList.remove('player--active');
+    } else {
+      // Switch to next player
+      switchPlayer();
+    }
   }
 
   // Test logs
-  console.log('Scores array:', scores);
-  console.log('Current score:', currentScore);
-  console.log('Active player:', activePlayer);
+  console.log('Current scores:', scores);
+  console.log('Win condition met:', scores[activePlayer] >= 100);
+  console.log('Game playing:', playing);
 });
+
+// Enhanced init function for complete game reset
+const init = function () {
+  // Reset game state
+  scores = [0, 0];
+  currentScore = 0;
+  activePlayer = 0;
+  playing = true;
+
+  // Reset all displays
+  score0El.textContent = 0;
+  score1El.textContent = 0;
+  current0El.textContent = 0;
+  current1El.textContent = 0;
+
+  // Hide dice
+  diceEl.classList.add('hidden');
+
+  // Reset player styling
+  player0El.classList.remove('player--winner');
+  player1El.classList.remove('player--winner');
+  player0El.classList.add('player--active');
+  player1El.classList.remove('player--active');
+};
+
+// New game functionality
+btnNew.addEventListener('click', init);
+
+// Optional test code for verification
+console.log('Game reset - scores:', scores);
+console.log('Game reset - playing:', playing);
+console.log('Game reset - active player:', activePlayer);
+console.log('Player 0 winner:', player0El.classList.contains('player--winner'));
+console.log('Player 1 winner:', player1El.classList.contains('player--winner'));
+console.log('Player 0 active:', player0El.classList.contains('player--active'));
+console.log('Player 1 active:', player1El.classList.contains('player--active'));
